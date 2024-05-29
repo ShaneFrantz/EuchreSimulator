@@ -1,15 +1,40 @@
 //-------------------------------------
+// Players & Teams
+
+const player1 = {
+    team: 1,
+    hand: []
+};
+
+const player2 = {
+    team: 2,
+    hand: []
+};
+
+const player3 = {
+    team: 1,
+    hand: []
+};
+
+const player4 = {
+    team: 2,
+    hand: []
+};
+
+const players = [player1, player2, player3, player4];
+
+//-------------------------------------
 // Deck
 
 // Card suits and values that will be used to create the deck
-const suits = ["Spades", "Diamonds", "Clubs", "Hearts"];
-const values = ["9", "10", "Jack", "Queen", "King", "Ace"];
+const CARD_SUITS = ["Spades", "Diamonds", "Clubs", "Hearts"];
+const CARD_VALUES = ["9", "10", "Jack", "Queen", "King", "Ace"];
 
 // Function to create the deck
 function createDeck() {
     const deck = [];
-    suits.forEach(suit => {
-        values.forEach(value => {
+    CARD_SUITS.forEach(suit => {
+        CARD_VALUES.forEach(value => {
             // Creating card object
             const card = {
                 value: value,
@@ -35,7 +60,6 @@ function shuffleDeck(deck) {
 }
 
 // Initializes deck variable
-const deck = createDeck()
+const deck = createDeck();
 console.log(deck);
-
 

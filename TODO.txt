@@ -1,8 +1,5 @@
 Define game rules
 
-methods for shuffling and dealing deck
-
-Create player object 
 Define hand, score, and methods for playing cards and deciding on trump
 
 Create game method to manage games 
