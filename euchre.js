@@ -1,4 +1,11 @@
-//-------------------------------------
+//TODO 
+// Dealing
+// Picking trump suit
+// Hand logic
+// Scoring logic
+
+
+
 // Players & Teams
 
 // Creating player objects
@@ -25,16 +32,32 @@ const player4 = {
 
 // Adding player objects to player list
 
-const players = [player1, player2, player3, player4];
+const PLAYERS = [player1, player2, player3, player4];
 
 //-------------------------------------
 // Deck
+
+// Initializes global deck variable
+var deck;
 
 // Card suits and values that will be used to create the deck
 const CARD_SUITS = ["Spades", "Diamonds", "Clubs", "Hearts"];
 const CARD_VALUES = ["9", "10", "Jack", "Queen", "King", "Ace"];
 
-// Function to create the deck
+// Function to shuffle deck in a true random manner
+// Uses Fisher-Yates for O(N) time complexity
+function shuffleDeck(deck) {
+    for (let i = deck.length - 1; i > 0; i--) {
+        // Random number from 0 to i inclusive
+        let j = Math.floor(Math.random() * (i + 1));
+
+        // Swap arr[i] with element of random index
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    return deck;
+}
+
+// Function to create a shuffled Euchre deck
 function createDeck() {
     const deck = [];
     CARD_SUITS.forEach(suit => {
@@ -48,22 +71,21 @@ function createDeck() {
             deck.push(card);
         });
     });
-    return deck;
+    
+    return shuffleDeck(deck);
 }
 
-// Function to shuffle deck in a true random manner
-// Uses Fisher-Yates for O(N) time complexity
-function shuffleDeck(deck) {
-    for (let i = deck.length - 1; i > 0; i--) {
-        // Random number from 0 to i inclusive
-        let j = Math.floor(Math.random() * (i + 1));
+// Function to deal five cards to each player
 
-        // Swap arr[i] with element of random index
-        [deck[i], deck[j]] = [deck[j], deck[i]];
-    }
+function dealCards() {
+    // Ensures deck is full and shuffled before dealing cards to players
+    deck = createDeck();
+    console.log(deck);
+
 }
 
-// Initializes deck variable
-const deck = createDeck();
-console.log(deck);
+dealCards();
+
+//-------------------------------------
+// Game Logic
 
