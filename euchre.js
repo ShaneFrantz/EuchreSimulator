@@ -1,5 +1,4 @@
 //TODO 
-// Dealing
 // Picking trump suit
 // Hand logic
 // Scoring logic
@@ -71,7 +70,7 @@ function createDeck() {
             deck.push(card);
         });
     });
-    
+
     return shuffleDeck(deck);
 }
 
@@ -80,11 +79,11 @@ function createDeck() {
 function dealCards() {
     // Ensures deck is full and shuffled before dealing cards to players
     deck = createDeck();
-    console.log(deck);
 
+    for (let i = 0; i < 5; i++) {
+        PLAYERS.forEach(player => player.hand.push(deck.pop()));
+    }
 }
-
-dealCards();
 
 //-------------------------------------
 // Game Logic
