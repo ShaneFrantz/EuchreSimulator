@@ -1,6 +1,8 @@
 //-------------------------------------
 // Players & Teams
 
+// Creating player objects
+
 const player1 = {
     team: 1,
     hand: []
@@ -20,6 +22,8 @@ const player4 = {
     team: 2,
     hand: []
 };
+
+// Adding player objects to player list
 
 const players = [player1, player2, player3, player4];
 
