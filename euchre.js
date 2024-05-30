@@ -141,7 +141,7 @@ async function pickUpRevealedCard(card, currentPlayerTurn, playerHand) {
     // Removes card at selected index
     playerHand.splice(playerDecision, 1);
 
-    PLAYERS[currentPlayerTurn].hand = playerHand;
+    PLAYERS[currentPlayerTurn - 1].hand = playerHand;
 }
 
 // Function to pick trump suit after cards have been dealt
@@ -152,27 +152,31 @@ async function pickTrumpSuit() {
     console.log(playedCards);
     // Do-while loop ask players to pick up or pass on the up card
     do {
-        console.log(PLAYERS[currentPlayerTurn].hand);
+        console.log(PLAYERS[currentPlayerTurn - 1].hand);
         playerDecision = await getInput(`Player ${currentPlayerTurn}: Pass or Pick Up: `);
         if (playerDecision.trim().toLowerCase() == "pick up") {
             trumpSuit = playedCards[0].suit;
             console.log(trumpSuit);
-            pickUpRevealedCard(playedCards[0], currentPlayerTurn, PLAYERS[currentPlayerTurn].hand);
+            await pickUpRevealedCard(playedCards[0], currentPlayerTurn, PLAYERS[currentPlayerTurn - 1].hand);
             return;
+        } else {
+            rotatePlayerTurn();
         }
-        else rotatePlayerTurn();
     } while (currentPlayerTurn !== playerStartingRound);
 
     let invalidTrumpSuit = playedCards[0].suit.trim().toLowerCase();
     
     // Do-while loop to ask players to pick a trump suit
     do {
-        console.log(PLAYERS[currentPlayerTurn].hand);
+        console.log(PLAYERS[currentPlayerTurn - 1].hand);
         while (true) {
-        playerDecision = await getInput(`Player ${currentPlayerTurn}: Pick a trump suit or pass : `);
-        playerDecision = playerDecision.trim().toLowerCase();
-        if (playerDecision == invalidTrumpSuit) console.log("Unable to pick suit of previously revealed card");
-        else break;
+            playerDecision = await getInput(`Player ${currentPlayerTurn}: Pick a trump suit or pass: `);
+            playerDecision = playerDecision.trim().toLowerCase();
+            if (playerDecision == invalidTrumpSuit) {
+                console.log("Unable to pick suit of previously revealed card");
+            } else {
+                break;
+            }
         }
         switch (playerDecision) {
             case "spades":
@@ -200,7 +204,19 @@ async function pickTrumpSuit() {
     return;
 }
 
+// Function to play and score one hand of Euchre
+function startHand() {
+    console.log("\n\nStarting Hand...");
+    console.log(`Player ${currentPlayerTurn} Hand: `);
+    showPlayerHandAsList(PLAYERS[currentPlayerTurn - 1].hand);
+}
 
+// Main game flow
+async function main() {
+    dealCards();
+    await pickTrumpSuit();
+    startHand();
+}
 
-dealCards();
-pickTrumpSuit();
+main();
+
