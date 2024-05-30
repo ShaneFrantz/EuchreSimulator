@@ -229,7 +229,7 @@ async function main() {
         dealCards();
         setCurrentDealer();
         await pickTrumpSuit();
-    } while (trumpSuit !== null);
+    } while (trumpSuit == null);
     startHand();
 }
 
