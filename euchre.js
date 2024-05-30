@@ -132,7 +132,7 @@ async function pickUpRevealedCard(card, currentPlayerTurn, playerHand) {
         console.log(i, playerHand[i]);
     }
     
-    playerDecision = await parseInt(getInput("Pick a card to discard (by index): "));
+    playerDecision = await getInput("Pick a card to discard (by index): ");
     // Removes card at selected index
     playerHand.splice(playerDecision, 1);
 
