@@ -145,18 +145,46 @@ async function pickTrumpSuit() {
     playerStartingRound = currentPlayerTurn;
     playedCards.push(deck.pop());
     console.log(playedCards);
-    // While loop ask players to pick up or pass on the up card
+    // Do-while loop ask players to pick up or pass on the up card
     do {
         console.log(getPlayerHand(currentPlayerTurn));
         playerDecision = await getInput(`Player ${currentPlayerTurn}: Pass or Pick Up: `);
-        if (playerDecision.trim().toLowerCase() === "pick up") {
+        if (playerDecision.trim().toLowerCase() == "pick up") {
             trumpSuit = playedCards[0].suit;
             console.log(trumpSuit);
             return;
         }
         else rotatePlayerTurn();
     } while (currentPlayerTurn !== playerStartingRound);
-    console.log("Ending rotation");
+    
+    // Do-while loop to ask players to pick a trump suit
+    do {
+        console.log(getPlayerHand(currentPlayerTurn));
+        playerDecision = await getInput(`Player ${currentPlayerTurn}: Pick a trump suit or pass : `);
+        playerDecision = playerDecision.trim().toLowerCase();
+        switch (playerDecision) {
+            case "spades":
+                trumpSuit = "Spades";
+                console.log(trumpSuit);
+                return;
+            case "diamonds":
+                trumpSuit = "Diamonds";
+                console.log(trumpSuit);
+                return;
+            case "clubs":
+                trumpSuit = "Clubs";
+                console.log(trumpSuit);
+                return;
+            case "hearts":
+                trumpSuit = "Hearts";
+                console.log(trumpSuit);
+                return;
+            default:
+                rotatePlayerTurn();
+                break;
+        }
+    } while (currentPlayerTurn !== playerStartingRound);
+    console.log("No trump suit selected");
     return;
 }
 
