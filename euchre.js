@@ -156,12 +156,18 @@ async function pickTrumpSuit() {
         }
         else rotatePlayerTurn();
     } while (currentPlayerTurn !== playerStartingRound);
+
+    let invalidTrumpSuit = playedCards[0].suit.trim().toLowerCase();
     
     // Do-while loop to ask players to pick a trump suit
     do {
         console.log(getPlayerHand(currentPlayerTurn));
+        while (true) {
         playerDecision = await getInput(`Player ${currentPlayerTurn}: Pick a trump suit or pass : `);
         playerDecision = playerDecision.trim().toLowerCase();
+        if (playerDecision == invalidTrumpSuit) console.log("Unable to pick suit of previously revealed card");
+        else break;
+        }
         switch (playerDecision) {
             case "spades":
                 trumpSuit = "Spades";
