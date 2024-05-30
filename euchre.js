@@ -3,28 +3,46 @@
 // Hand logic
 // Scoring logic
 
+//-------------------------------------
+// Imports/Libraries
 
+const readLine = require('readline');
 
+const rl = readLine.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+// Function to prompt user for input
+function getInput(query) {
+    return new Promise(resolve => rl.question(query, resolve));
+}
+
+//-------------------------------------
 // Players & Teams
 
 // Creating player objects
 
 const player1 = {
+    id: 1,
     team: 1,
     hand: []
 };
 
 const player2 = {
+    id: 2,
     team: 2,
     hand: []
 };
 
 const player3 = {
+    id: 3,
     team: 1,
     hand: []
 };
 
 const player4 = {
+    id: 4,
     team: 2,
     hand: []
 };
@@ -88,3 +106,46 @@ function dealCards() {
 //-------------------------------------
 // Game Logic
 
+// Stores which players are playing the round
+var playersInRound = [1, 2, 3, 4];
+var playedCards = [];
+var trumpSuit;
+var currentRound = 0;
+
+// Initialized current dealer and player turn
+var currentDealer = playersInRound[currentRound % 4];
+var currentPlayerTurn = playersInRound[(currentRound + 1) % 4];
+var playerStartingRound;
+
+// Function to rotate whose turn it is clockwise
+function rotatePlayerTurn() {
+    let currentPlayerTurnIndex = playersInRound.indexOf(currentPlayerTurn);
+
+    // Move to the next index, or loop back to beginning if at the end of the player list
+    let nextPlayerTurnIndex = (currentPlayerTurnIndex + 1) % playersInRound.length;
+
+    currentPlayerTurn = playersInRound[nextPlayerTurnIndex];
+}
+
+// Function to pick trump suit after cards have been dealt
+async function pickTrumpSuit() {
+    let playerDecision = "";
+    playerStartingRound = currentPlayerTurn;
+    playedCards.push(deck.pop());
+    console.log(playedCards);
+    // While loop to loop through all players once
+    do {
+        playerDecision = await getInput(`Player ${currentPlayerTurn}: Pass or Pick Up: `);
+        if (playerDecision.trim().toLowerCase() === "pick up") {
+            trumpSuit = playedCards[0].suit;
+            console.log(trumpSuit);
+            return;
+        }
+        else rotatePlayerTurn();
+    } while (currentPlayerTurn !== playerStartingRound);
+    console.log("Ending rotation");
+    return;
+}
+
+dealCards();
+pickTrumpSuit();
