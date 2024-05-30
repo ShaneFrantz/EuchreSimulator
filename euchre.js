@@ -113,9 +113,15 @@ var trumpSuit;
 var currentRound = 0;
 
 // Initialized current dealer and player turn
-var currentDealer = playersInRound[currentRound % 4];
-var currentPlayerTurn = playersInRound[(currentRound + 1) % 4];
+var currentDealer;
+var currentPlayerTurn;
 var playerStartingRound;
+
+// Function to set a new dealer at the beginning of each round
+function setCurrentDealer() {
+    currentDealer = playersInRound[currentRound % 4];
+    currentPlayerTurn = playersInRound[(currentRound + 1) % 4];
+}
 
 // Function to show a player's hand in a list format
 function showPlayerHandAsList(playerHand) {
@@ -205,6 +211,7 @@ async function pickTrumpSuit() {
         }
     } while (currentPlayerTurn !== playerStartingRound);
     console.log("No trump suit selected");
+    currentRound++;
     return;
 }
 
@@ -220,6 +227,7 @@ async function main() {
     // Does not start the hand until trump suit has been selected
     do {
         dealCards();
+        setCurrentDealer();
         await pickTrumpSuit();
     } while (trumpSuit !== null);
     startHand();
