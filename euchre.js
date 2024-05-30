@@ -113,6 +113,13 @@ var currentDealer = playersInRound[currentRound % 4];
 var currentPlayerTurn = playersInRound[(currentRound + 1) % 4];
 var playerStartingRound;
 
+// Function to show a player's hand in a list format
+function showPlayerHandAsList(playerHand) {
+    for (let i = 0; i < playerHand.length; i++) {
+        console.log(i, playerHand[i]);
+    }
+}
+
 // Function to rotate whose turn it is clockwise
 function rotatePlayerTurn() {
     let currentPlayerTurnIndex = playersInRound.indexOf(currentPlayerTurn);
@@ -127,18 +134,14 @@ function rotatePlayerTurn() {
 async function pickUpRevealedCard(card, currentPlayerTurn, playerHand) {
     let playerDecision = "";
     playerHand.push(card);
-    // Showing player hand to user in a list format
-    for (let i = 0; i < playerHand.length; i++) {
-        console.log(i, playerHand[i]);
-    }
+
+    showPlayerHandAsList(playerHand);
     
     playerDecision = await getInput("Pick a card to discard (by index): ");
     // Removes card at selected index
     playerHand.splice(playerDecision, 1);
 
     PLAYERS[currentPlayerTurn].hand = playerHand;
-
-    console.log(PLAYERS[currentPlayerTurn].hand);
 }
 
 // Function to pick trump suit after cards have been dealt
@@ -196,6 +199,8 @@ async function pickTrumpSuit() {
     console.log("No trump suit selected");
     return;
 }
+
+
 
 dealCards();
 pickTrumpSuit();
