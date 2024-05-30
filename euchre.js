@@ -24,25 +24,21 @@ function getInput(query) {
 // Creating player objects
 
 const player1 = {
-    id: 1,
     team: 1,
     hand: []
 };
 
 const player2 = {
-    id: 2,
     team: 2,
     hand: []
 };
 
 const player3 = {
-    id: 3,
     team: 1,
     hand: []
 };
 
 const player4 = {
-    id: 4,
     team: 2,
     hand: []
 };
@@ -117,6 +113,22 @@ var currentDealer = playersInRound[currentRound % 4];
 var currentPlayerTurn = playersInRound[(currentRound + 1) % 4];
 var playerStartingRound;
 
+// Function to return hand of a player given their ID
+function getPlayerHand(id) {
+    switch (id) {
+        case 1:
+            return player1.hand;
+        case 2:
+            return player2.hand;
+        case 3:
+            return player3.hand;
+        case 4:
+            return player4.hand;
+        default:
+            console.log("Invalid player ID");
+    }
+}
+
 // Function to rotate whose turn it is clockwise
 function rotatePlayerTurn() {
     let currentPlayerTurnIndex = playersInRound.indexOf(currentPlayerTurn);
@@ -133,8 +145,9 @@ async function pickTrumpSuit() {
     playerStartingRound = currentPlayerTurn;
     playedCards.push(deck.pop());
     console.log(playedCards);
-    // While loop to loop through all players once
+    // While loop ask players to pick up or pass on the up card
     do {
+        console.log(getPlayerHand(currentPlayerTurn));
         playerDecision = await getInput(`Player ${currentPlayerTurn}: Pass or Pick Up: `);
         if (playerDecision.trim().toLowerCase() === "pick up") {
             trumpSuit = playedCards[0].suit;
