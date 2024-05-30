@@ -52,6 +52,7 @@ const PLAYERS = [player1, player2, player3, player4];
 
 // Initializes global deck variable
 var deck;
+var playedCards = [];
 
 // Card suits and values that will be used to create the deck
 const CARD_SUITS = ["Spades", "Diamonds", "Clubs", "Hearts"];
@@ -94,6 +95,10 @@ function dealCards() {
     // Ensures deck is full and shuffled before dealing cards to players
     deck = createDeck();
 
+    // Empties player hands and played cards before dealing
+    PLAYERS.forEach(player => player.hand = []);
+    playedCards = [];
+
     for (let i = 0; i < 5; i++) {
         PLAYERS.forEach(player => player.hand.push(deck.pop()));
     }
@@ -104,7 +109,6 @@ function dealCards() {
 
 // Stores which players are playing the round
 var playersInRound = [1, 2, 3, 4];
-var playedCards = [];
 var trumpSuit;
 var currentRound = 0;
 
@@ -213,8 +217,11 @@ function startHand() {
 
 // Main game flow
 async function main() {
-    dealCards();
-    await pickTrumpSuit();
+    // Does not start the hand until trump suit has been selected
+    do {
+        dealCards();
+        await pickTrumpSuit();
+    } while (trumpSuit !== null);
     startHand();
 }
 
