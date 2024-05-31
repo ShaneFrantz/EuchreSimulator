@@ -1,6 +1,6 @@
 Define game rules
 
-Define hand, score, and methods for playing cards and deciding on trump
+Define hand, score, and methods for playing cards
 
 Create game method to manage games 
 

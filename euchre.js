@@ -1,7 +1,9 @@
 //TODO 
-// Picking trump suit
 // Hand logic
 // Scoring logic
+// startHand()
+// startRound()
+// startGame()
 
 //-------------------------------------
 // Imports/Libraries
