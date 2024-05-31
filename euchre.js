@@ -170,7 +170,7 @@ async function pickTrumpSuit() {
         playerDecision = await getInput(`Player ${currentPlayerTurn}: Pass or Pick Up: `);
         if (playerDecision.trim().toLowerCase() == "pick up") {
             trumpSuit = playedCards[0].suit;
-            console.log(trumpSuit);
+            console.log("Trump Suit: ", trumpSuit);
             await pickUpRevealedCard(playedCards[0], currentPlayerTurn, PLAYERS[currentPlayerTurn - 1].hand);
             return;
         } else {
@@ -230,6 +230,7 @@ async function startHand() {
     // Stores the leading suit of the hand
     let leadingSuit;
     let selectedCardIndex;
+    let selectedCard;
     playedCards = [];
     playerStartingHand = currentPlayerTurn;
 
@@ -237,17 +238,29 @@ async function startHand() {
     console.log("\n\nStarting Hand...\n\n");
 
     do {
+        // Prompts user for a valid card to play until conditions are met
+        while (true) {
         console.log("Trump Suit: ", trumpSuit);
         console.log("Played Cards: ", playedCards);
         showPlayerHandAsList(PLAYERS[currentPlayerTurn - 1].hand);
         selectedCardIndex = await getInput(`Player ${currentPlayerTurn} Select A Card (by index): `);
+        selectedCard = PLAYERS[currentPlayerTurn - 1].hand[selectedCardIndex];
+        console.log("\n\n");
+
+        if (currentPlayerTurn == playerStartingHand) {
+            leadingSuit = selectedCard.suit;
+            break;
+        }
+        else if (selectedCard.suit !== leadingSuit && handContainsLeadingSuit(PLAYERS[currentPlayerTurn - 1].hand, leadingSuit)) console.log("Must pick a card with the leading suit");
+        else break;
+        }
 
         // Updating player hand and played cards
         playedCards.push(PLAYERS[currentPlayerTurn - 1].hand[selectedCardIndex]);
         PLAYERS[currentPlayerTurn - 1].hand.splice(selectedCardIndex, 1);
+        
         rotatePlayerTurn();
-
-        console.log("\n\n");
+        
     } while (currentPlayerTurn !== playerStartingHand);
 }
 
