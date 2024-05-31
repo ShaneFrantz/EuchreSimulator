@@ -1,6 +1,6 @@
 //TODO 
-// Hand logic
-// Scoring logic
+// Scoring logic for hand
+// Scoring logic for round
 // startHand()
 // startRound()
 // startGame()
@@ -246,7 +246,8 @@ async function startHand() {
         selectedCardIndex = await getInput(`Player ${currentPlayerTurn} Select A Card (by index): `);
         selectedCard = PLAYERS[currentPlayerTurn - 1].hand[selectedCardIndex];
         console.log("\n\n");
-
+        
+        // Logic to check if card played is valid
         if (currentPlayerTurn == playerStartingHand) {
             leadingSuit = selectedCard.suit;
             break;
@@ -264,8 +265,8 @@ async function startHand() {
     } while (currentPlayerTurn !== playerStartingHand);
 }
 
-// Main game flow
-async function main() {
+// Function to start a round of Euchre
+async function startRound() {
     // Does not start the hand until trump suit has been selected
     do {
         dealCards();
@@ -276,5 +277,5 @@ async function main() {
     startHand();
 }
 
-main();
+startRound();
 
