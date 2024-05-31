@@ -117,7 +117,7 @@ var currentRound = 0;
 // Initialized current dealer and player turn
 var currentDealer;
 var currentPlayerTurn;
-var playerStartingRound;
+var playerStartingHand;
 
 // Function to set a new dealer at the beginning of each round
 function setCurrentDealer() {
@@ -159,11 +159,13 @@ async function pickUpRevealedCard(card, currentPlayerTurn, playerHand) {
 // Function to pick trump suit after cards have been dealt
 async function pickTrumpSuit() {
     let playerDecision = "";
-    playerStartingRound = currentPlayerTurn;
+    playerStartingHand = currentPlayerTurn;
     playedCards.push(deck.pop());
-    console.log(playedCards);
     // Do-while loop ask players to pick up or pass on the up card
     do {
+        console.log("\n\n");
+        console.log(playedCards);
+        console.log("\n");
         console.log(PLAYERS[currentPlayerTurn - 1].hand);
         playerDecision = await getInput(`Player ${currentPlayerTurn}: Pass or Pick Up: `);
         if (playerDecision.trim().toLowerCase() == "pick up") {
@@ -174,12 +176,13 @@ async function pickTrumpSuit() {
         } else {
             rotatePlayerTurn();
         }
-    } while (currentPlayerTurn !== playerStartingRound);
+    } while (currentPlayerTurn !== playerStartingHand);
 
     let invalidTrumpSuit = playedCards[0].suit.trim().toLowerCase();
     
     // Do-while loop to ask players to pick a trump suit
     do {
+        console.log("\n\n");
         console.log(PLAYERS[currentPlayerTurn - 1].hand);
         while (true) {
             playerDecision = await getInput(`Player ${currentPlayerTurn}: Pick a trump suit or pass: `);
@@ -211,17 +214,30 @@ async function pickTrumpSuit() {
                 rotatePlayerTurn();
                 break;
         }
-    } while (currentPlayerTurn !== playerStartingRound);
+    } while (currentPlayerTurn !== playerStartingHand);
     console.log("No trump suit selected");
     currentRound++;
     return;
 }
 
 // Function to play and score one hand of Euchre
-function startHand() {
-    console.log("\n\nStarting Hand...");
-    console.log(`Player ${currentPlayerTurn} Hand: `);
+async function startHand() {
+    // Stores the leading suit of the hand
+    let leadingSuit;
+    let selectedCardIndex;
+    playedCards = [];
+
+    // Prompting player for the card they want to play
+    console.log("\n\nStarting Hand...\n\n");
+    console.log("Played Cards: ", playedCards);
     showPlayerHandAsList(PLAYERS[currentPlayerTurn - 1].hand);
+    selectedCardIndex = await getInput(`Player ${currentPlayerTurn} Select A Card (by index): `);
+
+    // Updating player hand and played cards
+    playedCards.push(PLAYERS[currentPlayerTurn - 1].hand[selectedCardIndex]);
+    PLAYERS[currentPlayerTurn - 1].hand.splice(selectedCardIndex, 1);
+
+    console.log("\n\n");
 }
 
 // Main game flow
@@ -232,6 +248,7 @@ async function main() {
         setCurrentDealer();
         await pickTrumpSuit();
     } while (trumpSuit == null);
+
     startHand();
 }
 
