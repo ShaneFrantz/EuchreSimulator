@@ -1,9 +1,16 @@
 //TODO 
+// Going alone
 // Scoring logic for hand
 // Scoring logic for round
 // startHand()
 // startRound()
 // startGame()
+
+// Random AI
+// Smart AI
+// Auto simulating
+// Removing console logs on auto simulation
+// Data logging 
 
 //-------------------------------------
 // Imports/Libraries
