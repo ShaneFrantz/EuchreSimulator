@@ -220,24 +220,35 @@ async function pickTrumpSuit() {
     return;
 }
 
+// Function to check if a player's hand contains the leading suit
+function handContainsLeadingSuit(playerHand, leadingSuit) {
+    return playerHand.some(card => card.suit == leadingSuit);
+}
+
 // Function to play and score one hand of Euchre
 async function startHand() {
     // Stores the leading suit of the hand
     let leadingSuit;
     let selectedCardIndex;
     playedCards = [];
+    playerStartingHand = currentPlayerTurn;
 
     // Prompting player for the card they want to play
     console.log("\n\nStarting Hand...\n\n");
-    console.log("Played Cards: ", playedCards);
-    showPlayerHandAsList(PLAYERS[currentPlayerTurn - 1].hand);
-    selectedCardIndex = await getInput(`Player ${currentPlayerTurn} Select A Card (by index): `);
 
-    // Updating player hand and played cards
-    playedCards.push(PLAYERS[currentPlayerTurn - 1].hand[selectedCardIndex]);
-    PLAYERS[currentPlayerTurn - 1].hand.splice(selectedCardIndex, 1);
+    do {
+        console.log("Trump Suit: ", trumpSuit);
+        console.log("Played Cards: ", playedCards);
+        showPlayerHandAsList(PLAYERS[currentPlayerTurn - 1].hand);
+        selectedCardIndex = await getInput(`Player ${currentPlayerTurn} Select A Card (by index): `);
 
-    console.log("\n\n");
+        // Updating player hand and played cards
+        playedCards.push(PLAYERS[currentPlayerTurn - 1].hand[selectedCardIndex]);
+        PLAYERS[currentPlayerTurn - 1].hand.splice(selectedCardIndex, 1);
+        rotatePlayerTurn();
+
+        console.log("\n\n");
+    } while (currentPlayerTurn !== playerStartingHand);
 }
 
 // Main game flow
