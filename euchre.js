@@ -154,15 +154,34 @@ async function pickUpRevealedCard(card, currentPlayerTurn, playerHand) {
     let playerDecision = "";
     playerHand.push(card);
 
-    showPlayerHandAsList(playerHand);
-    
-    playerDecision = await getInput("Pick a card to discard (by index): ");
-    // Removes card at selected index
-    playerHand.splice(playerDecision, 1);
+    do {
+        try {
+            showPlayerHandAsList(playerHand);
+            
+            let playerDecision = await getInput("Pick a card to discard (by index): ");
+            
+            // Convert input to an integer
+            playerDecision = parseInt(playerDecision, 10);
+            
+            // Check if playerDecision is a number and is within the valid range
+            if (isNaN(playerDecision) || playerDecision < 0 || playerDecision >= playerHand.length) {
+                throw new Error("Invalid input: please enter a valid index.");
+            }
+            
+            // If the input is valid, remove the card and update the player's hand
+            playerHand.splice(playerDecision, 1);
+            PLAYERS[currentPlayerTurn - 1].hand = playerHand;
+            
+            // Exit the loop
+            break; 
+        } catch (error) {
+            console.log("An error occurred - try again: ", error.message);
+        }
+    } while (true);
 
-    PLAYERS[currentPlayerTurn - 1].hand = playerHand;
+    // Resets flag variable
+    isValidInput = false;
 }
-
 // Function to pick trump suit after cards have been dealt
 async function pickTrumpSuit() {
     let playerDecision = "";
@@ -247,30 +266,45 @@ async function startHand() {
     do {
         // Prompts user for a valid card to play until conditions are met
         while (true) {
-        console.log("Trump Suit: ", trumpSuit);
-        console.log("Played Cards: ", playedCards);
-        showPlayerHandAsList(PLAYERS[currentPlayerTurn - 1].hand);
-        selectedCardIndex = await getInput(`Player ${currentPlayerTurn} Select A Card (by index): `);
-        selectedCard = PLAYERS[currentPlayerTurn - 1].hand[selectedCardIndex];
-        console.log("\n\n");
-        
-        // Logic to check if card played is valid
-        if (currentPlayerTurn == playerStartingHand) {
-            leadingSuit = selectedCard.suit;
-            break;
-        }
-        else if (selectedCard.suit !== leadingSuit && handContainsLeadingSuit(PLAYERS[currentPlayerTurn - 1].hand, leadingSuit)) console.log("Must pick a card with the leading suit");
-        else break;
+            try {
+                console.log("Trump Suit: ", trumpSuit);
+                console.log("Played Cards: ", playedCards);
+                showPlayerHandAsList(PLAYERS[currentPlayerTurn - 1].hand);
+
+                selectedCardIndex = await getInput(`Player ${currentPlayerTurn} Select A Card (by index): `);
+                selectedCardIndex = parseInt(selectedCardIndex, 10);
+
+                // Check if playerDecision is a number and is within the valid range
+                if (isNaN(selectedCardIndex) || selectedCardIndex < 0 || selectedCardIndex >= PLAYERS[currentPlayerTurn - 1].hand.length) {
+                    throw new Error("Invalid input: please enter a valid index.");
+                }
+
+                selectedCard = PLAYERS[currentPlayerTurn - 1].hand[selectedCardIndex];
+                console.log("\n\n");
+
+                // Logic to check if card played is valid
+                if (currentPlayerTurn == playerStartingHand) {
+                    leadingSuit = selectedCard.suit;
+                    break;
+                } else if (selectedCard.suit !== leadingSuit && handContainsLeadingSuit(PLAYERS[currentPlayerTurn - 1].hand, leadingSuit)) {
+                    console.log("Must pick a card with the leading suit");
+                } else {
+                    break;
+                }
+            } catch (error) {
+                console.log("An error occurred - try again: ", error.message);
+            }
         }
 
         // Updating player hand and played cards
         playedCards.push(PLAYERS[currentPlayerTurn - 1].hand[selectedCardIndex]);
         PLAYERS[currentPlayerTurn - 1].hand.splice(selectedCardIndex, 1);
-        
+
         rotatePlayerTurn();
-        
+
     } while (currentPlayerTurn !== playerStartingHand);
 }
+
 
 // Function to start a round of Euchre
 async function startRound() {
