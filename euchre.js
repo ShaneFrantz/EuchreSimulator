@@ -1,5 +1,5 @@
 //TODO 
-// Going alone
+// Fix Going alone turn rotation logic
 // Scoring logic for hand
 // Scoring logic for round
 // startHand()
@@ -141,12 +141,8 @@ function showPlayerHandAsList(playerHand) {
 
 // Function to rotate whose turn it is clockwise
 function rotatePlayerTurn() {
-    let currentPlayerTurnIndex = playersInRound.indexOf(currentPlayerTurn);
-
-    // Move to the next index, or loop back to beginning if at the end of the player list
-    let nextPlayerTurnIndex = (currentPlayerTurnIndex + 1) % playersInRound.length;
-
-    currentPlayerTurn = playersInRound[nextPlayerTurnIndex];
+    if (currentPlayerTurn == playersInRound[playersInRound.length - 1]) currentPlayerTurn = playersInRound[0];
+    else currentPlayerTurn = playersInRound[playersInRound.indexOf(currentPlayerTurn) + 1];
 }
 
 // Function to handle picking up the revealed card when picking trump
@@ -182,6 +178,33 @@ async function pickUpRevealedCard(card, currentPlayerTurn, playerHand) {
     // Resets flag variable
     isValidInput = false;
 }
+
+// Function to set which players are going alone and remove their partners from playersInRound
+async function determineGoingAlone() {
+    let playerDecision = "";
+    // Prompting for team 1
+    console.log("\n\nTrump Suit: ", trumpSuit);
+    console.log("\nPlayer 1 Hand:");
+    console.log(player1.hand);
+    console.log("\nPlayer 3 Hand:")
+    console.log(player3.hand);
+
+    playerDecision = await getInput("\nSelect player (1 or 3) from team 1 to go alone: ");
+    if (playerDecision == "1") playersInRound.splice(2, 1);
+    else if (playerDecision == "3") playersInRound.splice(0, 1);
+
+    // Prompting for team 2
+    console.log("\n\nTrump Suit");
+    console.log("\nPlayer 1 Hand:");
+    console.log(player2.hand);
+    console.log("\nPlayer 3 Hand:")
+    console.log(player4.hand);
+
+    playerDecision = await getInput("\nSelect player (2 or 4) from team 1 to go alone: ");
+    if (playerDecision == "2") playersInRound.splice(3, 1);
+    else if (playerDecision == "4") playersInRound.splice(1, 1);
+}
+
 // Function to pick trump suit after cards have been dealt
 async function pickTrumpSuit() {
     let playerDecision = "";
@@ -258,6 +281,9 @@ async function startHand() {
     let selectedCardIndex;
     let selectedCard;
     playedCards = [];
+
+    // Reinitializing player turn
+    currentPlayerTurn = playersInRound[(currentRound + 1) % 4];
     playerStartingHand = currentPlayerTurn;
 
     // Prompting player for the card they want to play
@@ -315,6 +341,7 @@ async function startRound() {
         await pickTrumpSuit();
     } while (trumpSuit == null);
 
+    //await determineGoingAlone();
     startHand();
 }
 
