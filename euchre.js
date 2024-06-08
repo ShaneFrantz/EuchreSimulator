@@ -1,4 +1,7 @@
 //TODO 
+
+// Merge getPlayerLeftOfDealer() and rotatePlayerTurn() into one function
+
 // Scoring logic for hand
 // Scoring logic for round
 
@@ -304,7 +307,7 @@ function handContainsLeadingSuit(playerHand, leadingSuit) {
 
 // Function to play and score one hand of Euchre
 async function startHand() {
-    
+
     // Stores the leading suit of the hand
     let leadingSuit;
     let selectedCardIndex;
