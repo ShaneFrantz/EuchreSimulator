@@ -207,8 +207,13 @@ async function determineGoingAlone() {
     console.log(player3.hand);
 
     playerDecision = await getInput("\nSelect player (1 or 3) from team 1 to go alone: ");
-    if (playerDecision == "1") playersInRound.splice(2, 1);
-    else if (playerDecision == "3") playersInRound.splice(0, 1);
+    if (playerDecision == "1") {
+        teamOneAlone = true;
+        playersInRound.splice(2, 1);
+    } else if (playerDecision == "3") {
+        teamOneAlone = true;
+        playersInRound.splice(0, 1); 
+    }
 
     // Prompting for team 2
     console.log("\n\nTrump Suit");
@@ -218,8 +223,14 @@ async function determineGoingAlone() {
     console.log(player4.hand);
 
     playerDecision = await getInput("\nSelect player (2 or 4) from team 1 to go alone: ");
-    if (playerDecision == "2") playersInRound.splice(3, 1);
-    else if (playerDecision == "4") playersInRound.splice(1, 1);
+    if (playerDecision == "2") {
+        teamTwoAlone = true;
+        playersInRound.splice(3, 1);
+    }
+    else if (playerDecision == "4") {
+        teamTwoAlone = true;
+        playersInRound.splice(1, 1);
+    }
 }
 
 // Function to pick trump suit after cards have been dealt
@@ -293,6 +304,7 @@ function handContainsLeadingSuit(playerHand, leadingSuit) {
 
 // Function to play and score one hand of Euchre
 async function startHand() {
+    
     // Stores the leading suit of the hand
     let leadingSuit;
     let selectedCardIndex;
