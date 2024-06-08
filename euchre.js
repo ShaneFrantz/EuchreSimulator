@@ -126,10 +126,27 @@ var currentDealer;
 var currentPlayerTurn;
 var playerStartingHand;
 
+// Booleans to store which teams are going alone
+var teamOneAlone = false;
+var teamTwoAlone = false;
+
+// Function to return the player to the left of the current dealer
+function getPlayerLeftOfDealer(currentDealer) {
+    // Filters elements greater than the value of the current dealer
+    const playersLeftOfDealer = playersInRound.filter(player => player > currentDealer);
+
+    // If dealer is at the end of the playersInRound array, loops back to the beginning of the array
+    if (playersLeftOfDealer.length == 0) return playersInRound[0];
+
+    // Otherwise returns value after dealer in playersInRound
+    return playersLeftOfDealer[0];
+}
+
+
 // Function to set a new dealer at the beginning of each round
 function setCurrentDealer() {
     currentDealer = playersInRound[currentRound % 4];
-    currentPlayerTurn = playersInRound[(currentRound + 1) % 4];
+    currentPlayerTurn = getPlayerLeftOfDealer(currentDealer);
 }
 
 // Function to show a player's hand in a list format
@@ -154,7 +171,7 @@ async function pickUpRevealedCard(card, currentPlayerTurn, playerHand) {
         try {
             showPlayerHandAsList(playerHand);
             
-            let playerDecision = await getInput("Pick a card to discard (by index): ");
+            playerDecision = await getInput("Pick a card to discard (by index): ");
             
             // Convert input to an integer
             playerDecision = parseInt(playerDecision, 10);
@@ -283,8 +300,7 @@ async function startHand() {
     playedCards = [];
 
     // Reinitializing player turn
-    currentPlayerTurn = playersInRound[(currentRound + 1) % 4];
-    playerStartingHand = currentPlayerTurn;
+    currentPlayerTurn = getPlayerLeftOfDealer(currentDealer);
 
     // Prompting player for the card they want to play
     console.log("\n\nStarting Hand...\n\n");
@@ -331,9 +347,12 @@ async function startHand() {
     } while (currentPlayerTurn !== playerStartingHand);
 }
 
-
 // Function to start a round of Euchre
 async function startRound() {
+    // Resetting variables
+    teamOneAlone = false;
+    teamTwoAlone = false;
+
     // Does not start the hand until trump suit has been selected
     do {
         dealCards();
@@ -341,7 +360,7 @@ async function startRound() {
         await pickTrumpSuit();
     } while (trumpSuit == null);
 
-    //await determineGoingAlone();
+    await determineGoingAlone();
     startHand();
 }
 
