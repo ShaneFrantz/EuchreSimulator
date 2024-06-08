@@ -1,7 +1,7 @@
 //TODO 
-// Fix Going alone turn rotation logic
 // Scoring logic for hand
 // Scoring logic for round
+
 // startHand()
 // startRound()
 // startGame()
@@ -301,6 +301,7 @@ async function startHand() {
 
     // Reinitializing player turn
     currentPlayerTurn = getPlayerLeftOfDealer(currentDealer);
+    playerStartingHand = currentPlayerTurn;
 
     // Prompting player for the card they want to play
     console.log("\n\nStarting Hand...\n\n");
