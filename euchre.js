@@ -1,5 +1,6 @@
 //TODO 
 
+// Scoring logic for hand
 // Scoring logic for round
 
 // startHand()
