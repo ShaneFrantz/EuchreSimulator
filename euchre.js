@@ -1,7 +1,5 @@
 //TODO 
 
-// Merge getPlayerLeftOfDealer() and rotatePlayerTurn() into one function
-
 // Scoring logic for hand
 // Scoring logic for round
 
@@ -133,23 +131,23 @@ var playerStartingHand;
 var teamOneAlone = false;
 var teamTwoAlone = false;
 
-// Function to return the player to the left of the current dealer
-function getPlayerLeftOfDealer(currentDealer) {
-    // Filters elements greater than the value of the current dealer
-    const playersLeftOfDealer = playersInRound.filter(player => player > currentDealer);
+// Function to return the player to the left of given player
+function getPlayerToLeft(currentDealer) {
+    // Filters elements greater than the value of the current player
+    const playersToLeft = playersInRound.filter(player => player > currentDealer);
 
-    // If dealer is at the end of the playersInRound array, loops back to the beginning of the array
-    if (playersLeftOfDealer.length == 0) return playersInRound[0];
+    // If player is at the end of the playersInRound array, loops back to the beginning of the array
+    if (playersToLeft.length == 0) return playersInRound[0];
 
-    // Otherwise returns value after dealer in playersInRound
-    return playersLeftOfDealer[0];
+    // Otherwise returns value right after player in playersInRound
+    return playersToLeft[0];
 }
 
 
 // Function to set a new dealer at the beginning of each round
 function setCurrentDealer() {
     currentDealer = playersInRound[currentRound % 4];
-    currentPlayerTurn = getPlayerLeftOfDealer(currentDealer);
+    currentPlayerTurn = getPlayerToLeft(currentDealer);
 }
 
 // Function to show a player's hand in a list format
@@ -161,8 +159,7 @@ function showPlayerHandAsList(playerHand) {
 
 // Function to rotate whose turn it is clockwise
 function rotatePlayerTurn() {
-    if (currentPlayerTurn == playersInRound[playersInRound.length - 1]) currentPlayerTurn = playersInRound[0];
-    else currentPlayerTurn = playersInRound[playersInRound.indexOf(currentPlayerTurn) + 1];
+    currentPlayerTurn = getPlayerToLeft(currentPlayerTurn);
 }
 
 // Function to handle picking up the revealed card when picking trump
@@ -315,7 +312,7 @@ async function startHand() {
     playedCards = [];
 
     // Reinitializing player turn
-    currentPlayerTurn = getPlayerLeftOfDealer(currentDealer);
+    currentPlayerTurn = getPlayerToLeft(currentDealer);
     playerStartingHand = currentPlayerTurn;
 
     // Prompting player for the card they want to play
