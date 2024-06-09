@@ -1,6 +1,5 @@
 //TODO 
 
-// Scoring logic for hand
 // Scoring logic for round
 
 // startHand()
@@ -127,6 +126,9 @@ var currentDealer;
 var currentPlayerTurn;
 var playerStartingHand;
 
+// Stores the leading suit of the hand
+var leadingSuit;
+
 // Booleans to store which teams are going alone
 var teamOneAlone = false;
 var teamTwoAlone = false;
@@ -217,9 +219,9 @@ async function determineGoingAlone() {
 
     // Prompting for team 2
     console.log("\n\nTrump Suit");
-    console.log("\nPlayer 1 Hand:");
+    console.log("\nPlayer 2 Hand:");
     console.log(player2.hand);
-    console.log("\nPlayer 3 Hand:")
+    console.log("\nPlayer 4 Hand:")
     console.log(player4.hand);
 
     playerDecision = await getInput("\nSelect player (2 or 4) from team 1 to go alone: ");
@@ -273,19 +275,15 @@ async function pickTrumpSuit() {
         switch (playerDecision) {
             case "spades":
                 trumpSuit = "Spades";
-                console.log(trumpSuit);
                 return;
             case "diamonds":
                 trumpSuit = "Diamonds";
-                console.log(trumpSuit);
                 return;
             case "clubs":
                 trumpSuit = "Clubs";
-                console.log(trumpSuit);
                 return;
             case "hearts":
                 trumpSuit = "Hearts";
-                console.log(trumpSuit);
                 return;
             default:
                 rotatePlayerTurn();
@@ -298,15 +296,72 @@ async function pickTrumpSuit() {
 }
 
 // Function to check if a player's hand contains the leading suit
-function handContainsLeadingSuit(playerHand, leadingSuit) {
+function handContainsLeadingSuit(playerHand) {
     return playerHand.some(card => card.suit == leadingSuit);
+}
+
+// Function to return the player that won the hand
+function determineHandWinner() {
+    // Define value order for non-trump and trump suits (excluding bowers for trumpValues)
+    const valueOrder = ["9", "10", "Jack", "Queen", "King", "Ace"];
+    const trumpValues = ["9", "10", "Q", "K", "A"];
+
+    // Determine left bower suit given trump suit
+    let leftBowerSuit;
+    switch (trumpSuit) {
+        case 'Hearts':
+            leftBowerSuit = 'Diamonds';
+            break;
+        case 'Diamonds':
+            leftBowerSuit = 'Hearts';
+            break;
+        case 'Clubs':
+            leftBowerSuit = 'Spades';
+            break;
+        case 'Spades':
+            leftBowerSuit = 'Clubs';
+            break;
+    }
+
+    // Map each card to a value based on how strong it is (based on trump suit and leading suit)
+    const playedCardValues = playedCards.map(card => {
+        // Right bower (highest trump card)
+        if (card.suit == trumpSuit && card.value == "Jack") return 13;
+        // Left bower (second highest trump card)
+        else if (card.suit == leftBowerSuit && card.value == 'Jack') return 12;
+        // Other trump cards (adding 6 to make sure they have priority over non trump cards)
+        else if (card.suit == trumpSuit) return 6 + trumpValues.indexOf(card.value);
+        // Leading suit cards
+        else if (card.suit == leadingSuit) return valueOrder.indexOf(card.value);
+        // All other cards
+        else return -1;
+    });
+
+    // Variables to track the best card in playedCards and its value
+    let bestCardIndex = 0;
+    let bestValue = playedCardValues[0];
+
+    // Iterate through playedCardValues to find the highest one
+    for (let i = 1; i < playedCards.length; i++) {
+        if (playedCardValues[i] > bestValue) {
+            bestCardIndex = i;
+            bestValue = playedCardValues[i];
+        }
+    }
+
+    // Rotated player array made to match playedCards with correct players
+    let rotatedPlayerArray = playersInRound.slice(playerStartingHand).concat(playersInRound.slice(0, playerStartingHand));
+
+    console.log("Player " + rotatedPlayerArray[bestCardIndex] + " won the hand with the " + playedCards[bestCardIndex].value + " of " + playedCards[bestCardIndex].suit + "!");
+
+    // Return the player who played the best card
+    return rotatedPlayerArray[bestCardIndex];
+
 }
 
 // Function to play and score one hand of Euchre
 async function startHand() {
 
-    // Stores the leading suit of the hand
-    let leadingSuit;
     let selectedCardIndex;
     let selectedCard;
     playedCards = [];
@@ -341,7 +396,7 @@ async function startHand() {
                 if (currentPlayerTurn == playerStartingHand) {
                     leadingSuit = selectedCard.suit;
                     break;
-                } else if (selectedCard.suit !== leadingSuit && handContainsLeadingSuit(PLAYERS[currentPlayerTurn - 1].hand, leadingSuit)) {
+                } else if (selectedCard.suit !== leadingSuit && handContainsLeadingSuit(PLAYERS[currentPlayerTurn - 1].hand)) {
                     console.log("Must pick a card with the leading suit");
                 } else {
                     break;
@@ -358,6 +413,8 @@ async function startHand() {
         rotatePlayerTurn();
 
     } while (currentPlayerTurn !== playerStartingHand);
+
+    determineHandWinner();
 }
 
 // Function to start a round of Euchre
@@ -365,6 +422,9 @@ async function startRound() {
     // Resetting variables
     teamOneAlone = false;
     teamTwoAlone = false;
+
+    // Adding all players back to round
+    playersInRound = [1, 2, 3, 4];
 
     // Does not start the hand until trump suit has been selected
     do {
